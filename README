@@ -259,3 +259,23 @@ vendor
   External libraries that the application depends on. Also includes the plugins
   subdirectory. If the app has frozen rails, those gems also go here, under
   vendor/rails/. This directory is in the load path.
+
+
+
+deploying to heroku- STEPS:
+NOTE: assignment 2 app: http://immense-ocean-8313.herokuapp.com/movies
+
+1. create the stack on heroku (do only once for new apps):
+  heroku create --stack cedar
+
+2. push git repo to heroku
+  git push heroku master
+
+3. check process status
+  heroku ps
+
+4. run DB migrations
+  heroku run rake db:migrate
+
+
+
