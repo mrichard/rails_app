@@ -7,14 +7,26 @@ class MoviesController < ApplicationController
   end
 
   def index
-    if params[:sort_by]
-      @movies = Movie.find(:all, :order => params[:sort_by])
-      @sorted_by = params[:sort_by]
+    @sorted_by = params[:sort_by]
+    @all_ratings = Movie.get_all_ratings
+
+    if params[:ratings]
+      condition_hash = {:conditions => {:rating => params[:ratings].keys} }
+      @chosen_ratings = params[:ratings]
     else
-      @movies = Movie.all
+      condition_hash = {:conditions => {:rating => []} }
+      @chosen_ratings = {}
     end
 
-    logger.debug params[:sort_by]
+    if params[:sort_by]
+      sort_hash = {:order => params[:sort_by]}
+    else
+      sort_hash = {}
+    end
+
+    query_hash = condition_hash.merge(sort_hash)
+
+    @movies = Movie.find(:all, query_hash)
   end
 
   def new
