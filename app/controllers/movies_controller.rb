@@ -15,14 +15,18 @@ class MoviesController < ApplicationController
     @sorted_by = params[:sort_by] || {}
     @restricted_by = params[:ratings] || {}
 
-    if(@sorted_by.empty? && @restricted_by.empty?)
+    if(@sorted_by.empty? && @restricted_by.empty? && params[:commit] != "Refresh")
       session_sort = {:sort_by => session[:sort_by] || "" }
       session_ratings = {:ratings => session[:ratings] || "" }
 
       session_data = session_sort.merge(session_ratings)
 
-      flash.keep
-      redirect_to movies_path(session_data)
+      logger.debug { session_data }
+      if ( !session_data[:sort_by].empty? || !session_data[:ratings].empty?)
+        flash.keep
+        redirect_to movies_path(session_data)
+      end
+
     end
 
     session[:sort_by] = @sorted_by
