@@ -9,12 +9,25 @@ class MoviesController < ApplicationController
   def index
     @all_ratings = Movie.get_all_ratings
 
-    @sorted_by = params[:sort_by] || session[:sort_by] || {}
-    @restricted_by = params[:ratings] || session[:ratings] || {}
+    #@sorted_by = params[:sort_by] || session[:sort_by] || {}
+    #@restricted_by = params[:ratings] || session[:ratings] || {}
+
+    @sorted_by = params[:sort_by] || {}
+    @restricted_by = params[:ratings] || {}
+
+    if(@sorted_by.empty? && @restricted_by.empty?)
+      session_sort = {:sort_by => session[:sort_by] || "" }
+      session_ratings = {:ratings => session[:ratings] || "" }
+
+      session_data = session_sort.merge(session_ratings)
+
+      flash.keep
+      redirect_to movies_path(session_data)
+    end
 
     session[:sort_by] = @sorted_by
     session[:ratings] = @restricted_by
-    
+
     logger.debug { session }
 
     if @restricted_by
