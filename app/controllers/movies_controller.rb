@@ -7,21 +7,22 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @sorted_by = params[:sort_by]
     @all_ratings = Movie.get_all_ratings
 
-    if params[:ratings]
-      condition_hash = {:conditions => {:rating => params[:ratings].keys} }
-      @chosen_ratings = params[:ratings]
-    else
-      condition_hash = {:conditions => {:rating => []} }
-      @chosen_ratings = {}
+    @sorted_by = params[:sort_by] || session[:sort_by] || {}
+    @restricted_by = params[:ratings] || session[:ratings] || {}
+
+    session[:sort_by] = @sorted_by
+    session[:ratings] = @restricted_by
+    
+    logger.debug { session }
+
+    if @restricted_by
+      condition_hash = {:conditions => {:rating => @restricted_by.keys} } || {}
     end
 
-    if params[:sort_by]
-      sort_hash = {:order => params[:sort_by]}
-    else
-      sort_hash = {}
+    if @sorted_by
+      sort_hash = {:order => @sorted_by} || {}
     end
 
     query_hash = condition_hash.merge(sort_hash)
